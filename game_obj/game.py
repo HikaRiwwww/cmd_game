@@ -1,4 +1,6 @@
 import curses
+
+from utils import log
 from . import stdscr
 from . import new_win
 from .snake import Snake, Food
@@ -16,7 +18,7 @@ class Game:
         self.load_game_window()
         for o in obj:
             s, y, x = o.cur_style
-            stdscr.addstr("s:{}, y{}, x{}\n".format(s, y, x))
+            log(s, y, x)
             stdscr.refresh()
             new_win.addstr(y, x, s)
             new_win.refresh()
@@ -39,6 +41,7 @@ class Game:
             elif c == curses.KEY_DOWN:
                 s.down()
             self.draw(s, f)
+
     def listen_event(self):
         """
         监听键盘事件
