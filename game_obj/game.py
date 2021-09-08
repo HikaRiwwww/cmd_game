@@ -18,8 +18,7 @@ class Game:
         self.load_game_window()
         for o in obj:
             s, y, x = o.cur_style
-            log(s, y, x)
-            stdscr.refresh()
+            # stdscr.refresh()
             new_win.addstr(y, x, s)
             new_win.refresh()
 
@@ -27,9 +26,9 @@ class Game:
         # 初始化游戏对象
         s = Snake()
         f = Food()
-        # 渲染图形
-        self.draw(s, f)
         while True:
+            # 渲染图形
+            self.draw(s, f)
             # 监听事件
             c = new_win.getch()
             if c == curses.KEY_LEFT:
@@ -40,6 +39,8 @@ class Game:
                 s.up()
             elif c == curses.KEY_DOWN:
                 s.down()
+            if s.eat(f):
+                f = Food()
             self.draw(s, f)
 
     def listen_event(self):
