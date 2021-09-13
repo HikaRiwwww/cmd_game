@@ -2,16 +2,8 @@ import curses
 
 HEIGHT = 20
 WIDTH = 60
-Y_START = 10
-X_START = 10
-
-TITLE_START_Y = 10
-TITLE_START_X = 22
+Y_START = 0
+X_START = 0
 
 stdscr = curses.initscr()
 stdscr.keypad(True)
-
-
-new_win = curses.newwin(HEIGHT, WIDTH, Y_START, X_START)
-new_win.nodelay(True)
-new_win.keypad(True)

@@ -1,6 +1,3 @@
-import random
-from . import TITLE_START_X, TITLE_START_Y
-
 
 class Dot:
     def __init__(self, x, y, sign):
