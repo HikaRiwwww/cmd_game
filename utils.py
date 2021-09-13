@@ -8,3 +8,4 @@ def log(*args, **kwargs):
     for k, v in kwargs:
         s += "{}={},".format(k, v)
     stdscr.addstr(s[:-1] + "\n")
+    stdscr.refresh()

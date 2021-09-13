@@ -13,4 +13,5 @@ stdscr.keypad(True)
 
 
 new_win = curses.newwin(HEIGHT, WIDTH, Y_START, X_START)
+new_win.nodelay(True)
 new_win.keypad(True)
