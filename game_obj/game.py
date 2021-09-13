@@ -22,17 +22,19 @@ class Game:
 
     def update_direction(self):
         for i, dot in enumerate(self.snake):
-            direct = self.turning_points.get((dot.x, dot.y))
+            x, y = dot.x, dot.y
+            direct = self.turning_points.get((x, y))
             if direct:
                 dot.set_direct(*direct)
                 if i == len(self.snake) - 1:
-                    self.turning_points.pop(dot.x, dot.y)
+                    self.turning_points.pop((x, y))
 
     @staticmethod
     def new_food():
         return Dot(random.randint(1, TITLE_START_X - 1), random.randint(1, TITLE_START_Y - 1), 'o')
 
-    def load_game_window(self):
+    @staticmethod
+    def load_game_window():
         new_win.clear()
         new_win.border('#', '#', '#', '#')
 
@@ -89,12 +91,10 @@ class Game:
             elif c in [ord('q'), ord('Q')]:
                 self.quit()
                 return
-            if self.turning_points:
-                self.update_direction()
             if self.snake_eat():
                 self.food = self.new_food()
                 self.snake_grows()
-            time.sleep(0.2)
+            time.sleep(0.5)
 
     @staticmethod
     def quit():
