@@ -1,17 +1,19 @@
 import curses
 import time
-
-from utils import log
-from . import stdscr, win
-from .dot import Food, Snake
+from snake.snake import Food, Snake
+from .painter import Painter
+from snake.config import GAME_WIN_SIZE, GAME_WIN_BORDER, SPEED
 
 
 class Game:
     def __init__(self):
         self.delay_flag = True
-        self.win = win
+        self.painter = Painter()
+        self.win = self.painter.create_game_win(GAME_WIN_SIZE['height'], GAME_WIN_SIZE['width'])
         self.food = Food()
         self.snake = Snake()
+        self.score = 0
+        self.speed = SPEED
         self.flag = True  # 游戏继续进行的标志，撞墙或撞到自己则游戏结束
         self.white_keys = [ord('p'), ord('P'), ord('q'), ord('Q')]  # 暂停时接受的按键
         self.key_events = {
@@ -19,8 +21,8 @@ class Game:
             curses.KEY_RIGHT: self.snake.right,
             curses.KEY_UP: self.snake.up,
             curses.KEY_DOWN: self.snake.down,
-            ord('q'): self.quit,
-            ord('Q'): self.quit,
+            ord('q'): self.__quit,
+            ord('Q'): self.__quit,
             ord('p'): self.pause,
             ord('P'): self.pause,
         }
@@ -29,7 +31,6 @@ class Game:
     def init_win(self):
         self.win.nodelay(self.delay_flag)
         self.win.keypad(True)
-        self.win.refresh()
 
     def pause(self):
         self.delay_flag = not self.delay_flag
@@ -37,12 +38,11 @@ class Game:
 
     def draw(self):
         # 加载游戏界面
-        self.win.clear()
-        self.win.border('#', '#', '#', '#')
+        self.painter.draw_guidance()
+        self.painter.draw_score_board(str(self.score))
+        self.painter.draw_game_win(self.win, GAME_WIN_BORDER)
         # 渲染食物和蛇的图像
-        self.win.addstr(self.food.y, self.food.x, self.food.sign)
-        for b in self.snake.body:
-            self.win.addstr(b.y, b.x, b.sign)
+        self.painter.draw_dots(self.win, self.food, *self.snake.body)
         self.win.refresh()
 
     def listen_key_events(self):
@@ -61,17 +61,16 @@ class Game:
             self.listen_key_events()
             self.check_ele_status()
             self.snake.move()
-            time.sleep(0.33)
-        self.__quit()
+            time.sleep(1 / SPEED)
+        self.quit()
 
-    @staticmethod
-    def __quit():
+    def quit(self):
         curses.nocbreak()
-        stdscr.keypad(False)
+        self.painter.scr.keypad(False)
         curses.echo()
         curses.endwin()
 
-    def quit(self):
+    def __quit(self):
         self.flag = False
 
     def check_ele_status(self):
@@ -85,5 +84,5 @@ class Game:
         if self.snake.eat(self.food):
             self.snake.grows()
             self.food = Food()
-
+            self.score += 10
         self.snake.update_direction()

@@ -1,40 +1,13 @@
 import random
 
-from game_obj import WIDTH, HEIGHT
-from utils import log
-
-
-class Dot:
-    def __init__(self, x, y, sign):
-        """
-        游戏元素的基类，每个游戏元素都是由一个或多个在命令行中的坐标点所组成的
-        :param x:
-        :param y:
-        :param sign:
-        """
-        # 坐标
-        self.x = x
-        self.y = y
-
-        # 文字显示
-        self.sign = sign
-
-        # 运动方向
-        self.direct_x = 0
-        self.direct_y = 0
-
-    def set_direct(self, x, y):
-        self.direct_x = x
-        self.direct_y = y
-
-    def __eq__(self, other):
-        return self.x == other.x and self.y == other.y
+from game_obj.bases import Dot
+from .config import GAME_WIN_SIZE
 
 
 class Snake:
     def __init__(self):
-        head_x = random.randint(1, WIDTH - 2)
-        head_y = random.randint(1, HEIGHT - 2)
+        head_x = random.randint(1, GAME_WIN_SIZE['width'] - 2)
+        head_y = random.randint(1, GAME_WIN_SIZE['height'] - 2)
         direct = self.calc_direct(head_x, head_y)
         self.head = Dot(head_x, head_y, '■')
         self.head.set_direct(*direct)
@@ -50,7 +23,7 @@ class Snake:
         """
         # (0,1) 向下    (0,-1) 向上    (1,0) 向右    (-1,0) 向左
         # 右和下的边缘距离
-        u_dst, l_dst, r_dst, d_dst = y, x, WIDTH-x, HEIGHT-y
+        u_dst, l_dst, r_dst, d_dst = y, x, GAME_WIN_SIZE['width']-x, GAME_WIN_SIZE['height']-y
         m = max(x, y, r_dst, d_dst)
         if m == u_dst:
             return 0, -1
@@ -107,8 +80,8 @@ class Snake:
             b.y += b.direct_y
 
     def hit_wall(self):
-        return self.head.x <= 0 or self.head.x >= WIDTH - 1 or \
-               self.head.y <= 0 or self.head.y >= HEIGHT - 1
+        return self.head.x <= 0 or self.head.x >= GAME_WIN_SIZE['width'] - 1 or \
+               self.head.y <= 0 or self.head.y >= GAME_WIN_SIZE['height'] - 1
 
     def hit_self(self):
         return self.head in self.body[1:]
@@ -130,6 +103,6 @@ class Snake:
 
 class Food(Dot):
     def __init__(self):
-        head_x = random.randint(1, WIDTH - 2)
-        head_y = random.randint(1, HEIGHT - 2)
+        head_x = random.randint(1, GAME_WIN_SIZE['width'] - 2)
+        head_y = random.randint(1, GAME_WIN_SIZE['height'] - 2)
         super().__init__(head_x, head_y, 'o')
