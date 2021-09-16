@@ -35,12 +35,31 @@ class Snake:
     def __init__(self):
         head_x = random.randint(1, WIDTH - 2)
         head_y = random.randint(1, HEIGHT - 2)
+        direct = self.calc_direct(head_x, head_y)
         self.head = Dot(head_x, head_y, '■')
-        self.head.set_direct(0, 1)
+        self.head.set_direct(*direct)
         self.body = [self.head]
-        self.turning_points = {
-            (head_x, head_y): (1, 0),
-        }
+        self.turning_points = {}
+
+    @staticmethod
+    def calc_direct(x, y):
+        """
+        计算初始行进方向
+        防止出生点离边缘较近同时又朝边缘移动导致游戏过快结束
+        :return:
+        """
+        # (0,1) 向下    (0,-1) 向上    (1,0) 向右    (-1,0) 向左
+        # 右和下的边缘距离
+        u_dst, l_dst, r_dst, d_dst = y, x, WIDTH-x, HEIGHT-y
+        m = max(x, y, r_dst, d_dst)
+        if m == u_dst:
+            return 0, -1
+        elif m == l_dst:
+            return -1, 0
+        elif m == r_dst:
+            return 1, 0
+        else:
+            return 0, 1
 
     def left(self):
         if self.head.direct_x == 1:

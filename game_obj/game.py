@@ -1,10 +1,9 @@
 import curses
-import random
 import time
 
 from utils import log
 from . import stdscr, win
-from .dot import Dot, Food, Snake
+from .dot import Food, Snake
 
 
 class Game:
@@ -36,21 +35,18 @@ class Game:
         self.delay_flag = not self.delay_flag
         self.win.nodelay(self.delay_flag)
 
-    def load_game_window(self):
-        self.win.clear()
-        self.win.border('#', '#', '#', '#')
-
     def draw(self):
         # 加载游戏界面
-        self.load_game_window()
-
+        self.win.clear()
+        self.win.border('#', '#', '#', '#')
         # 渲染食物和蛇的图像
         self.win.addstr(self.food.y, self.food.x, self.food.sign)
         for b in self.snake.body:
             self.win.addstr(b.y, b.x, b.sign)
         self.win.refresh()
 
-    def listen_key_events(self, c):
+    def listen_key_events(self):
+        c = self.win.getch()
         # 游戏进入暂停，不接受除暂停和退出以外的操作
         if not self.delay_flag:
             while c not in self.white_keys:
@@ -62,12 +58,10 @@ class Game:
         # 初始化游戏对象
         while self.flag:
             self.draw()
-            self.snake.move()
-            c = self.win.getch()
-            self.listen_key_events(c)
+            self.listen_key_events()
             self.check_ele_status()
-            time.sleep(0.3)
-
+            self.snake.move()
+            time.sleep(0.33)
         self.__quit()
 
     @staticmethod
