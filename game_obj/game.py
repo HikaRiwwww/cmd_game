@@ -14,6 +14,7 @@ class Game:
         self.food = Food()
         self.snake = Snake()
         self.flag = True  # 游戏继续进行的标志，撞墙或撞到自己则游戏结束
+        self.white_keys = [ord('p'), ord('P'), ord('q'), ord('Q')]  # 暂停时接受的按键
         self.key_events = {
             curses.KEY_LEFT: self.snake.left,
             curses.KEY_RIGHT: self.snake.right,
@@ -50,10 +51,9 @@ class Game:
         self.win.refresh()
 
     def listen_key_events(self, c):
-        white_keys = [ord('p'), ord('P'), ord('q'), ord('Q')]
         # 游戏进入暂停，不接受除暂停和退出以外的操作
         if not self.delay_flag:
-            while c not in white_keys:
+            while c not in self.white_keys:
                 c = self.win.getch()
         m = self.key_events.get(c)
         return m() if m else None
