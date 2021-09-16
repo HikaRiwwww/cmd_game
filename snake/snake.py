@@ -1,7 +1,7 @@
 import random
 
 from game_obj.bases import Dot
-from .config import GAME_WIN_SIZE
+from .config import GAME_WIN_SIZE, SNAKE_STYLE
 
 
 class Snake:
@@ -9,7 +9,7 @@ class Snake:
         head_x = random.randint(1, GAME_WIN_SIZE['width'] - 2)
         head_y = random.randint(1, GAME_WIN_SIZE['height'] - 2)
         direct = self.calc_direct(head_x, head_y)
-        self.head = Dot(head_x, head_y, '■')
+        self.head = Dot(head_x, head_y, SNAKE_STYLE['head'])
         self.head.set_direct(*direct)
         self.body = [self.head]
         self.turning_points = {}
@@ -70,7 +70,7 @@ class Snake:
         tail = self.body[-1]
         x = tail.x - tail.direct_x
         y = tail.y - tail.direct_y
-        new_tail = Dot(x, y, '□')
+        new_tail = Dot(x, y, SNAKE_STYLE['body'])
         new_tail.set_direct(tail.direct_x, tail.direct_y)
         self.body.append(new_tail)
 

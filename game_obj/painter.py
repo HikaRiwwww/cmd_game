@@ -26,7 +26,6 @@ class Painter:
             self.draw_text(p, t)
             p.y += 1
 
-
     @staticmethod
     def draw_dots(win, *dots):
         for dot in dots:

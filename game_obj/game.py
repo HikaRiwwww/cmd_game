@@ -38,12 +38,14 @@ class Game:
 
     def draw(self):
         # 加载游戏界面
+        self.painter.scr.erase()
         self.painter.draw_guidance()
         self.painter.draw_score_board(str(self.score))
         self.painter.draw_game_win(self.win, GAME_WIN_BORDER)
         # 渲染食物和蛇的图像
         self.painter.draw_dots(self.win, self.food, *self.snake.body)
-        self.win.refresh()
+        # self.win.refresh()
+        # self.painter.scr.refresh()
 
     def listen_key_events(self):
         c = self.win.getch()
