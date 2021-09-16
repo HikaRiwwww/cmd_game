@@ -4,6 +4,7 @@ HEIGHT = 20
 WIDTH = 60
 
 stdscr = curses.initscr()
+curses.curs_set(0)  # 隐藏输入光标
 h, w = stdscr.getmaxyx()
 try:
     win = stdscr.subwin(HEIGHT, WIDTH, (h - HEIGHT) // 2, (w - WIDTH) // 2)
