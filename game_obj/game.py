@@ -3,12 +3,13 @@ import random
 import time
 
 from utils import log
-from . import stdscr, HEIGHT, WIDTH, Y_START, X_START, win
+from . import stdscr, win
 from .dot import Dot, Food, Snake
 
 
 class Game:
     def __init__(self):
+        self.delay_flag = True
         self.win = win
         self.food = Food()
         self.snake = Snake()
@@ -20,8 +21,19 @@ class Game:
             curses.KEY_DOWN: self.snake.down,
             ord('q'): self.quit,
             ord('Q'): self.quit,
-
+            ord('p'): self.pause,
+            ord('P'): self.pause,
         }
+        self.init_win()
+
+    def init_win(self):
+        self.win.nodelay(self.delay_flag)
+        self.win.keypad(True)
+        self.win.refresh()
+
+    def pause(self):
+        self.delay_flag = not self.delay_flag
+        self.win.nodelay(self.delay_flag)
 
     def load_game_window(self):
         self.win.clear()
@@ -38,6 +50,11 @@ class Game:
         self.win.refresh()
 
     def listen_key_events(self, c):
+        white_keys = [ord('p'), ord('P'), ord('q'), ord('Q')]
+        # 游戏进入暂停，不接受除暂停和退出以外的操作
+        if not self.delay_flag:
+            while c not in white_keys:
+                c = self.win.getch()
         m = self.key_events.get(c)
         return m() if m else None
 
@@ -48,8 +65,8 @@ class Game:
             self.snake.move()
             c = self.win.getch()
             self.listen_key_events(c)
-            self.check_game_status()
-            time.sleep(0.1)
+            self.check_ele_status()
+            time.sleep(0.3)
 
         self.__quit()
 
@@ -63,7 +80,7 @@ class Game:
     def quit(self):
         self.flag = False
 
-    def check_game_status(self):
+    def check_ele_status(self):
         """
         对游戏中各种状态进行判断
         :return:
@@ -74,5 +91,5 @@ class Game:
         if self.snake.eat(self.food):
             self.snake.grows()
             self.food = Food()
-            
+
         self.snake.update_direction()
