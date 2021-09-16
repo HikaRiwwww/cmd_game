@@ -35,22 +35,22 @@ class Snake:
             return 0, 1
 
     def left(self):
-        if self.head.direct_x == 1:
+        if self.head.direct_x in [1, -1]:
             return
         self.update_turing_points(-1, 0)
 
     def right(self):
-        if self.head.direct_x == -1:
+        if self.head.direct_x in [1, -1]:
             return
         self.update_turing_points(1, 0)
 
     def up(self):
-        if self.head.direct_y == 1:
+        if self.head.direct_y in [1, -1]:
             return
         self.update_turing_points(0, -1)
 
     def down(self):
-        if self.head.direct_y == -1:
+        if self.head.direct_y in [1, -1]:
             return
         self.update_turing_points(0, 1)
 
