@@ -21,3 +21,11 @@ GUIDANCE = {
 }
 
 SNAKE_STYLE = {"head": "■", "body": "□"}
+
+GAME_OVER_SIZE = {
+    "height": 10, "width": 30,
+    "border": ["~", "~", "~", "~"],
+    "text": ["GAME OVER!", "Continue?", "1.Yes 2.No"],
+    "text_pos_x": 10,
+    "text_pos_y": 0,
+}
