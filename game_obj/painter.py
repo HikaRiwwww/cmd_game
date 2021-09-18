@@ -71,4 +71,5 @@ class Painter:
         for t in text:
             self.draw_text(pos, t, win=win)
             pos.y += 2
+        curses.curs_set(0)
         return win

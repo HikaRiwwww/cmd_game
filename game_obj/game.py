@@ -17,7 +17,10 @@ class Game:
         self.speed = SPEED
         self.over_flag = False  # 游戏结束的标志，撞墙或撞到自己则游戏结束
         self.white_keys = [ord('p'), ord('P'), ord('q'), ord('Q')]  # 暂停时接受的按键
-        self.key_events = {
+        self.key_events = self.register_key_events()
+
+    def register_key_events(self):
+        return {
             curses.KEY_LEFT: self.snake.left,
             curses.KEY_RIGHT: self.snake.right,
             curses.KEY_UP: self.snake.up,
@@ -92,14 +95,16 @@ class Game:
         over_win = self.painter.draw_game_over()
         self.pause()
         c = over_win.getch()
-        self.painter.draw_text(Position(5, 5), "press:{}".format(c))
         while c not in [ord('1'), ord('2')]:
             c = over_win.getch()
+        over_win.nodelay(True)
+        over_win.clear()
         del over_win
         return False if c == ord('1') else True
 
     def reset(self):
         self.snake = Snake()
+        self.key_events = self.register_key_events()
         self.food = Food()
         self.over_flag = False
         self.score = 0
