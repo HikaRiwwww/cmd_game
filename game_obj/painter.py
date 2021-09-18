@@ -28,7 +28,8 @@ class Painter:
 
     def draw_dots(self, win, *dots):
         for dot in dots:
-            win.addstr(dot.y, dot.x, dot.sign)
+            print(dot.pos.y, dot.pos.x, dot.direct_x, dot.direct_y, dot.sign)
+            win.addstr(dot.pos.y, dot.pos.x, dot.sign)
 
     def draw_text(self, pos, text, win=None):
         if win:

@@ -15,7 +15,7 @@ SCORE_BOARD = {
 }
 
 GUIDANCE = {
-    "text": ["Press: ", "↑ ← ↓ → to turn", "Press P or p to pause or resume", "Press Q or q to quit,"],
+    "text": ["Press: ", "↑ ← ↓ → to turn", "P or p to pause or resume", "Q or q to quit,"],
     "text_pos_x": 0,
     "text_pos_y": 1,
 }

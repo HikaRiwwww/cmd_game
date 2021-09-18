@@ -1,4 +1,4 @@
-from game_obj.game import Game
+from snake.game import Game
 
 
 if __name__ == '__main__':

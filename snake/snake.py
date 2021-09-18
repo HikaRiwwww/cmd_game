@@ -1,21 +1,20 @@
 import random
 
-from game_obj.bases import Dot
+from game_obj.bases import Dot, Position
 from .config import GAME_WIN_SIZE, SNAKE_STYLE
 
 
 class Snake:
     def __init__(self):
-        head_x = random.randint(1, GAME_WIN_SIZE['width'] - 2)
-        head_y = random.randint(1, GAME_WIN_SIZE['height'] - 2)
-        direct = self.calc_direct(head_x, head_y)
-        self.head = Dot(head_x, head_y, SNAKE_STYLE['head'])
-        self.head.set_direct(*direct)
+        pos = Position(random.randint(1, GAME_WIN_SIZE['width'] - 2), random.randint(1, GAME_WIN_SIZE['height'] - 2))
+        direct_pos = self.calc_direct(pos)
+        self.head = Dot(pos, SNAKE_STYLE['head'])
+        self.head.set_direct(direct_pos)
         self.body = [self.head]
         self.turning_points = {}
 
     @staticmethod
-    def calc_direct(x, y):
+    def calc_direct(pos: Position):
         """
         计算初始行进方向
         防止出生点离边缘较近同时又朝边缘移动导致游戏过快结束
@@ -23,16 +22,17 @@ class Snake:
         """
         # (0,1) 向下    (0,-1) 向上    (1,0) 向右    (-1,0) 向左
         # 右和下的边缘距离
+        x, y = pos.x, pos.y
         u_dst, l_dst, r_dst, d_dst = y, x, GAME_WIN_SIZE['width']-x, GAME_WIN_SIZE['height']-y
         m = max(x, y, r_dst, d_dst)
         if m == u_dst:
-            return 0, -1
+            return Position(0, -1)
         elif m == l_dst:
-            return -1, 0
+            return Position(-1, 0)
         elif m == r_dst:
-            return 1, 0
+            return Position(1, 0)
         else:
-            return 0, 1
+            return Position(0, 1)
 
     def left(self):
         if self.head.direct_x in [1, -1]:
@@ -55,12 +55,12 @@ class Snake:
         self.update_turing_points(0, 1)
 
     def update_turing_points(self, direct_x, direct_y):
-        x = self.head.x
-        y = self.head.y
+        x = self.head.pos.x
+        y = self.head.pos.y
         self.turning_points[(x, y)] = (direct_x, direct_y)
 
     def eat(self, food: Dot):
-        return self.head.x == food.x and self.head.y == food.y
+        return self.head == food
 
     def grows(self):
         """
@@ -68,20 +68,19 @@ class Snake:
         :return:
         """
         tail = self.body[-1]
-        x = tail.x - tail.direct_x
-        y = tail.y - tail.direct_y
-        new_tail = Dot(x, y, SNAKE_STYLE['body'])
-        new_tail.set_direct(tail.direct_x, tail.direct_y)
+        pos = Position(tail.pos.x - tail.direct_x, tail.pos.y - tail.direct_y)
+        new_tail = Dot(pos, SNAKE_STYLE['body'])
+        new_tail.set_direct(Position(tail.direct_x, tail.direct_y))
         self.body.append(new_tail)
 
     def move(self):
         for b in self.body:
-            b.x += b.direct_x
-            b.y += b.direct_y
+            b.pos.x += b.direct_x
+            b.pos.y += b.direct_y
 
     def hit_wall(self):
-        return self.head.x <= 0 or self.head.x >= GAME_WIN_SIZE['width'] - 1 or \
-               self.head.y <= 0 or self.head.y >= GAME_WIN_SIZE['height'] - 1
+        return self.head.pos.x <= 0 or self.head.pos.x >= GAME_WIN_SIZE['width'] - 1 or \
+               self.head.pos.y <= 0 or self.head.pos.y >= GAME_WIN_SIZE['height'] - 1
 
     def hit_self(self):
         return self.head in self.body[1:]
@@ -93,16 +92,15 @@ class Snake:
         :return:
         """
         for i, dot in enumerate(self.body):
-            x, y = dot.x, dot.y
+            x, y = dot.pos.x, dot.pos.y
             direct = self.turning_points.get((x, y))
             if direct:
-                dot.set_direct(*direct)
+                dot.set_direct(Position(*direct))
                 if i == len(self.body) - 1:
                     self.turning_points.pop((x, y))
 
 
 class Food(Dot):
     def __init__(self):
-        head_x = random.randint(1, GAME_WIN_SIZE['width'] - 2)
-        head_y = random.randint(1, GAME_WIN_SIZE['height'] - 2)
-        super().__init__(head_x, head_y, 'o')
+        pos = Position(random.randint(1, GAME_WIN_SIZE['width'] - 2), random.randint(1, GAME_WIN_SIZE['height'] - 2))
+        super().__init__(pos, 'o')

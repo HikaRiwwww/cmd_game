@@ -1,8 +1,8 @@
 import curses
 import time
 from snake.snake import Food, Snake
-from .bases import Position
-from .painter import Painter
+from game_obj.bases import Position
+from game_obj.painter import Painter
 from snake.config import GAME_WIN_SIZE, GAME_WIN_BORDER, SPEED, GAME_OVER_SIZE
 
 
@@ -16,11 +16,12 @@ class Game:
         self.score = 0
         self.speed = SPEED
         self.over_flag = False  # 游戏结束的标志，撞墙或撞到自己则游戏结束
+        self.quit_flag = False  # 转为按q退出设置，实现过于丑陋，但是简单啊！先这么着
         self.white_keys = [ord('p'), ord('P'), ord('q'), ord('Q')]  # 暂停时接受的按键
-        self.key_events = self.register_key_events()
+        self.register_key_events()
 
     def register_key_events(self):
-        return {
+        self.key_events = {
             curses.KEY_LEFT: self.snake.left,
             curses.KEY_RIGHT: self.snake.right,
             curses.KEY_UP: self.snake.up,
@@ -64,6 +65,8 @@ class Game:
                     break
                 else:
                     self.reset()
+            elif self.quit_flag:
+                break
             self.snake.move()
             time.sleep(1 / SPEED)
         self.quit()
@@ -75,7 +78,7 @@ class Game:
         curses.endwin()
 
     def __quit(self):
-        self.over_flag = True
+        self.quit_flag = True
 
     def check_ele_status(self):
         """
@@ -104,8 +107,9 @@ class Game:
 
     def reset(self):
         self.snake = Snake()
-        self.key_events = self.register_key_events()
+        self.register_key_events()
         self.food = Food()
         self.over_flag = False
+        self.quit_flag = False
         self.score = 0
         self.pause()
